@@ -1,17 +1,20 @@
 import { z } from 'zod';
-import { baseProcedure, createTRPCRouter } from '../init';
+import { TRPCError } from '@trpc/server';
+import { baseProcedure, createTRPCRouter, protectedProcedure } from '../init';
+import { auth } from '@clerk/nextjs/server';
 export const appRouter = createTRPCRouter({
-    hello: baseProcedure
+    hello: protectedProcedure
         .input(
             z.object({
                 text: z.string(),
             }),
         )
         .query((opts) => {
-            console.log("Recieved call with opts : ", opts);
+            const userId = opts.ctx.clerkUserId;
+            const user = opts.ctx.user;
 
             return {
-                greeting: `hello ${opts.input.text}`,
+                greeting: `hello ${user.name}`
             };
         }),
 });

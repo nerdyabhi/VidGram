@@ -28,17 +28,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+
     <ClerkProvider afterSignOutUrl='/'>
-      <html lang="en">
-        <link rel="shortcut icon" href="../assets/logo.svg" />
-        <body
-          className={inter.className}
-        >
-          <TRPCProvider>
+      <TRPCProvider>
+        <html lang="en">
+          <link rel="shortcut icon" href="../assets/logo.svg" />
+          <body
+            className={inter.className}
+          >
             {children}
-          </TRPCProvider>
-        </body>
-      </html>
+          </body>
+        </html>
+      </TRPCProvider>
+
     </ClerkProvider>
 
   );
