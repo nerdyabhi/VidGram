@@ -3,10 +3,10 @@
 import { trpc } from "@/trpc/client"
 
 export const PageClient = () => {
-    const [data] = trpc.hello.useSuspenseQuery({ text: "Abhi" })
+    const [data] = trpc.categories.getMany.useSuspenseQuery()
     return (
         <div>
-            PageClient says : {data.greeting}.
+            {JSON.stringify(data)}
         </div>
     )
 }
