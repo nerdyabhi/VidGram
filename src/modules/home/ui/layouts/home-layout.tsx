@@ -13,9 +13,7 @@ export const HomeLayout = ({ children }: HomeLayoutProps) => {
         <SidebarProvider>
             <div className="w-full">
                 <HomeNavbar/>
-                <div className="bg-blue-400 p-4 text-white shadow-xl">
-                    <p>Home Navbar</p>
-                </div>
+             
 
                 <div className="flex min-h-screen pt-[4rem] ">
                     <HomeSideBar/>
