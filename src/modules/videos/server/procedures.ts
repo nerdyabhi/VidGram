@@ -1,0 +1,23 @@
+import { db } from "@/db";
+import { videos } from "@/db/schema";
+import { z } from "zod";
+import { DEFAULT_LIMIT } from "@/constants";
+import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+
+export const videosRouter = createTRPCRouter({
+    
+    create: protectedProcedure.mutation(async ({ ctx }) => {
+        const { id: userId } = ctx.user;
+
+        const [video] = await db
+            .insert(videos)
+            .values({
+                userId,
+                title: "Untitled"
+            }).returning();
+
+        return {
+            video
+        }
+    })
+})

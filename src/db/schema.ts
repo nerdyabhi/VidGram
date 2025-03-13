@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { uuid, text, pgTable } from "drizzle-orm/pg-core";
 
@@ -20,3 +21,43 @@ export const categories = pgTable("categories", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (t) => [uniqueIndex("name_idx").on(t.name)]);
+
+const userRelations = relations(users, ({ many }) => ({
+    vidoes: many(videos)
+}))
+
+export const videos = pgTable("videos", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    title: text("title").notNull(),
+    description: text("description"),
+    userId: uuid("user_id").references(() => users.id, {
+        onDelete: "cascade"
+    }).notNull(),
+
+    categoryId: uuid("category_id").references(() => categories.id, {
+        onDelete: "set null"
+    }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull()
+
+
+})
+
+
+export const videoRelations = relations(videos, ({ one, many }) => ({
+    user: one(users, {
+        fields: [videos.userId],
+        references: [users.id],
+    }),
+    category: one(categories, {
+        fields: [videos.categoryId],
+        references: [categories.id],
+    })
+}))
+
+const categoriesRelation = relations(users, ({ many }) => ({
+    vidoes: many(videos)
+}))
+
+
+

@@ -6,7 +6,7 @@ import "./globals.css";
 import { TRPCProvider } from "@/trpc/client";
 const inter = Inter({ subsets: ['latin'] });
 
-
+import { Toaster } from "@/components/ui/sonner";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -36,6 +36,8 @@ export default function RootLayout({
           <body
             className={inter.className}
           >
+          <Toaster/>
+
             {children}
           </body>
         </html>
