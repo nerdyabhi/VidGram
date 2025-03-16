@@ -40,7 +40,7 @@ export const VideosSectionSuspense = () => {
                     <TableBody>
                         {videos.pages.flatMap((page) => page.items).map((video) => (
                             <Link href={`/studio/videos/${video.id}`} key={video.id} legacyBehavior>
-                                <TableRow className="cursor-pointer text-center">
+                                <TableRow className="cursor-pointer ">
                                     <TableCell>
                                         {video.title}
                                     </TableCell>
