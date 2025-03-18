@@ -3,8 +3,8 @@
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { trpc } from '@/trpc/client'
-import { MoreVerticalIcon, TrashIcon } from 'lucide-react'
-import { Suspense } from 'react'
+import { CopyCheck, CopyIcon, LockIcon, MoreVerticalIcon, TrashIcon } from 'lucide-react'
+import { Suspense, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { z } from 'zod';
 import { toast } from 'sonner'
+import Link from 'next/link';
+import { Globe2Icon } from 'lucide-react'
 
 import {
     Form,
@@ -30,6 +32,9 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { videoUpdateSchema } from '@/db/schema'
+import { VideoPlayer } from '@/modules/videos/ui/components/video-player'
+import { snakeCaseToTitle } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
 
 
 
@@ -61,11 +66,23 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
     const [categories] = trpc.categories.getMany.useSuspenseQuery();
 
     const utils = trpc.useUtils();
+    const router = useRouter();
     const update = trpc.vidoes.update.useMutation({
         onSuccess: () => {
             utils.studio.getMany.invalidate();
             utils.studio.getOne.invalidate();
             toast.success("Successfully Updated the video");
+        },
+        onError: () => {
+            toast.error("Something went wrong");
+        }
+    });
+
+    const remove = trpc.vidoes.delete.useMutation({
+        onSuccess: () => {
+            utils.studio.getMany.invalidate();
+            toast.success("Successfully Deleted the video");
+            router.push('/studio');
         },
         onError: () => {
             toast.error("Something went wrong");
@@ -81,7 +98,8 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
         update.mutate(data);
     }
 
-
+    const fullUrl = `${process.env.VERCEL_URL || "https://localhost:3000"}/videos/${videoId}`
+    const [isCopied, setIsCopied] = useState(false);
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -102,9 +120,11 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                                     <MoreVerticalIcon />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align='start' className='flex items-center cursor-pointer hover:bg-gray-100 justify-center gap-2'>
-                                <TrashIcon className='size-4 mr-2' />
-                                Delete
+                            <DropdownMenuContent align='end' >
+                                <DropdownMenuItem onClick={() => remove.mutate({ id: videoId })}>
+                                    <TrashIcon className='size-4 mr-2' />
+                                    Delete
+                                </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
@@ -179,8 +199,103 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                                 </FormItem>
                             )}
                         />
+                    </div>
 
+                    {/* Video Thumbnail and Visibility update options */}
+                    <div className="flex flex-col gap-y-8 lg:col-span-2">
+                        <div className="flex flex-col gap-4 bg-[#F9F9F9] rounded-xl overflow-hidden h-fit">
+                            <div className="aspect-video overflow-hidden relative">
+                                <VideoPlayer playbackId={video.muxPlaybackId}
+                                    thumbnailUrl={video.thumbnailUrl} />
+                            </div>
+                            <div className="p-4 flex flex-col gap-y-6">
+                                <div className="flex justify-between items-center gap-x-2">
+                                    <div className="flex flex-col gap-y-1">
+                                        <p className='text-muted-foreground text-xs'>Video Link</p>
+                                        <div className="flex items-center gap-x-2">
+                                            <Link href={`/vidoes/${video.id}`}>
+                                                <p className='line-clamp-1 text-sm text-blue-500 cursor-pointer'>
+                                                    {fullUrl}
+                                                </p>
+                                            </Link>
 
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                disabled={isCopied}
+                                                onClick={async () => {
+                                                    navigator.clipboard.writeText(fullUrl);
+                                                    setIsCopied(true);
+
+                                                    setTimeout(() => {
+                                                        setIsCopied(false);
+                                                    }, 2000)
+                                                }}
+                                                className="cursor-pointer"
+                                            >
+                                                {!isCopied ? <CopyIcon /> : <CopyCheck />}
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-between items-center">
+                                    <div className="flex flex-col gap-y-1">
+                                        <p className="text-muted-foreground">
+                                            Video Status
+                                        </p>
+
+                                        <p>{snakeCaseToTitle(video.muxStatus || "Preparing...")}</p>
+
+                                    </div>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="flex flex-col gap-y-1">
+                                        <p className="text-muted-foreground">
+                                            Subtitle Status
+                                        </p>
+
+                                        <p>{snakeCaseToTitle(video.muxTrackStatus || "no subtitles")} </p>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        {/* Visibility form */}
+                        <FormField
+                            control={form.control}
+                            name="visibility"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        Visibility
+                                        {/* Add Ai generate button */}
+                                    </FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value ?? undefined}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder='Select Visibility' />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value='public' >
+                                                <Globe2Icon className='size-4 mr-2' />
+                                                Public
+                                            </SelectItem>
+
+                                            <SelectItem value='private' >
+                                                <LockIcon className='size-4 mr-2' />
+                                                Private
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
                 </div>
             </form>

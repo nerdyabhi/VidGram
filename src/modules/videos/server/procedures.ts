@@ -74,5 +74,27 @@ export const videosRouter = createTRPCRouter({
                 throw new TRPCError({ code: 'NOT_FOUND' })
             }
 
+            return updatedVideo;
+
+        }),
+
+    delete: protectedProcedure
+        .input(z.object({ id: z.string().uuid() }))
+        .mutation(async ({ ctx, input }) => {
+            const { id: userId } = ctx.user;
+
+            const [removedVideo] = await db
+                .delete(videos).
+                where(and(
+                    eq(videos.id, input.id),
+                    eq(videos.userId, userId),
+                )).returning();
+
+            if (!removedVideo) {
+                throw new TRPCError({ code: "NOT_FOUND" })
+            }
+
+            return removedVideo;
+
         })
 })
