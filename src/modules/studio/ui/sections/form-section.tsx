@@ -100,9 +100,22 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
         update.mutate(data);
     }
 
-    const fullUrl = `${process.env.VERCEL_URL || "https://localhost:3000"}/videos/${videoId}`
+    const restoreThumbnail = trpc.vidoes.restoreThumbnail.useMutation({
+        onSuccess: () => {
+            utils.studio.getMany.invalidate();
+            utils.studio.getOne.invalidate({ id: videoId });
+            toast.success("Thumbnail Restored ")
+        },
+        onError: () => {
+            toast.error("Something went wrong")
+        }
+
+
+    })
+
+    const fullUrl = `${process.env.VERCEL_URL || "http://localhost:3000"}/videos/${videoId}`
     const [isCopied, setIsCopied] = useState(false);
-    const [thumbnailModalOpen , setThumbnailModalOpen] = useState(false);
+    const [thumbnailModalOpen, setThumbnailModalOpen] = useState(false);
 
     // Returning Part
     return (
@@ -180,7 +193,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
 
                             {/* Thumbnail Field Here */}
 
-                        <FormField
+                            <FormField
                                 control={form.control}
                                 name="thumbnailUrl"
                                 render={() => (
@@ -189,7 +202,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                                             Thumbnail
                                             {/* Add Ai generate button */}
                                         </FormLabel>
-                                            <FormControl>
+                                        <FormControl>
                                             <div className="p-0.5 border border-dashed border-neutral-400 relative h-[84px] w-[153px] group">
                                                 <Image
                                                     src={video.thumbnailUrl ?? "/placeholder.svg"}
@@ -199,34 +212,34 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                                                 />
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger>
-                                                        <Button type='button'  size='icon' className='bg-black/50 cursor-pointer hover:bg-black/80 absolute top-1 right-1'>
-                                                            <MoreVerticalIcon className='text-white'/>
+                                                        <Button type='button' size='icon' className='bg-black/50 cursor-pointer hover:bg-black/80 absolute top-1 right-1'>
+                                                            <MoreVerticalIcon className='text-white' />
                                                         </Button>
-                                                    </DropdownMenuTrigger> 
+                                                    </DropdownMenuTrigger>
 
                                                     <DropdownMenuContent align='start' side='right'>
                                                         {/* 1. button */}
-                                                        <DropdownMenuItem onClick={()=>setThumbnailModalOpen(true)}>
-                                                            <ImagePlusIcon className='size-4 mr-1'/>
+                                                        <DropdownMenuItem onClick={() => setThumbnailModalOpen(true)}>
+                                                            <ImagePlusIcon className='size-4 mr-1' />
                                                             Change
                                                         </DropdownMenuItem>
                                                         {/* 1. button */}
 
                                                         <DropdownMenuItem>
-                                                            <SparklesIcon className='size-4 mr-1'/>
+                                                            <SparklesIcon className='size-4 mr-1' />
                                                             Ai-Generation
                                                         </DropdownMenuItem>
                                                         {/* 1. button */}
 
-                                                        <DropdownMenuItem>
-                                                            <RotateCcwIcon className='size-4 mr-1'/>
+                                                        <DropdownMenuItem onClick={() => restoreThumbnail.mutate({ id: videoId })}>
+                                                            <RotateCcwIcon className='size-4 mr-1' />
                                                             Restore
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </div>
-                                            </FormControl>
-                                        
+                                        </FormControl>
+
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -267,7 +280,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
 
                         </div>
 
-                    
+
 
 
 

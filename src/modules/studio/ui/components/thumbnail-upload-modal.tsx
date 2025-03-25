@@ -25,7 +25,7 @@ export const ThumbnailUploadModal = ({ videoId, open, onOpenChange }: ThumbnailU
             title="Upload a thumbnail"
             open={open}
             onOpenChange={onOpenChange}>
-            <UploadDropzone endpoint="thumbnailUploader" input={{ videoId }}
+            <UploadDropzone className="bg-black border-blue-400 border-2 z-10" endpoint="thumbnailUploader" input={{ videoId }}
                 onClientUploadComplete={onUploadComplete}
             />
             {/* <UploadButton className="bg-black text-white" input={undefined} endpoint={"thumbnailUploader"} /> */}
