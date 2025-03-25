@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { users, videos, videoSelectSchema, videoUpdateSchema } from "@/db/schema";
+import { users, videos, videoSelectSchema, videoUpdateSchema, videoViews } from "@/db/schema";
 import { z } from "zod";
 import { DEFAULT_LIMIT } from "@/constants";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
@@ -7,6 +7,7 @@ import { mux } from "@/lib/mux";
 import { and, eq, getTableColumns } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { UTApi } from "uploadthing/server";
+import { VideoViews } from "@mux/mux-node/resources/data/video-views.mjs";
 
 export const videosRouter = createTRPCRouter({
 
@@ -19,7 +20,8 @@ export const videosRouter = createTRPCRouter({
                     ...getTableColumns(videos),
                     user: {
                         ...getTableColumns(users),
-                    }
+                    },
+                    viewCount: db.$count(videoViews, eq(videoViews.videoId, videos.id))
                 })
                 .from(videos)
                 .where(eq(videos.id, input.id))
