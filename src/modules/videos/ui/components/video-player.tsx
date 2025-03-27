@@ -9,6 +9,12 @@ interface VideoPlayerProps {
 import MuxPlayer from '@mux/mux-player-react'
 
 
+export const VideoPlayerSkeleton = () => {
+    return (
+        <div className='aspect-video bg-black rounded-xl' />
+    )
+
+}
 export const VideoPlayer = ({ playbackId, thumbnailUrl, autoPlay, onPlay }: VideoPlayerProps) => {
 
     return (

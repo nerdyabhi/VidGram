@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link";
 import { VideoGetOneOutput } from "../../types";
 import { UserAvatar } from "@/components/user-avatar";
@@ -5,6 +6,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { SubscriptionButton } from "@/modules/subscriptions/ui/components/subscription-button";
 import { UserInfo } from "@/modules/users/ui/components/user-info";
+import { UseSubscription } from "@/modules/subscriptions/hooks/use-subscription";
 
 interface VideoOwnerProps {
     user: VideoGetOneOutput['user'];
@@ -14,6 +16,13 @@ interface VideoOwnerProps {
 export const VideoOwner = ({ user, videoId }: VideoOwnerProps) => {
 
     const { userId } = useAuth();
+    const { isPending, onClick } = UseSubscription({
+        userId: user.id,
+        isSubscribed: user.viewerSubscribed,
+        fromVideoId: videoId,
+    })
+
+
     return (
         <div className="flex items-ceter sm:items-start justify-between sm:justify-start gap-3">
             <Link href={`/users/${user.id}`}>
@@ -22,7 +31,7 @@ export const VideoOwner = ({ user, videoId }: VideoOwnerProps) => {
                     <div className="flex flex-col gap-1 min-w-0">
                         <UserInfo size='lg' name={user.name} />
                         <div className="text-sm text-muted-foreground line-clamp-1">
-                            {0} Subscribers
+                            {user.subscriberCount}  {user.subscriberCount > 1 ? 'Subscribers' : 'Subscriber'}
                         </div>
                     </div>
                 </div>
@@ -33,7 +42,7 @@ export const VideoOwner = ({ user, videoId }: VideoOwnerProps) => {
                         Edit Video
                     </Link>
                 </Button>
-            ) : <SubscriptionButton onClick={undefined} disabled={false} isSubscribed={false} />}
+            ) : <SubscriptionButton onClick={onClick} disabled={isPending} isSubscribed={user.viewerSubscribed} />}
 
         </div>
     )

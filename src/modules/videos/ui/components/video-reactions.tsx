@@ -69,8 +69,8 @@ export const VideoReactions = ({ videoId, likes, dislikes }: VideoReactionsProps
                     viewerReaction = 'dislike';
                 }}
                 disabled={like.isPending || dislike.isPending}
-                variant={'secondary'} className="rounded-l-none rounded-r-full pl-3 pr-4">
-                <ThumbsDownIcon className={cn('size-5', viewerReaction == 'dislike' && "fill-black")} />
+                variant={'secondary'} className="rounded-l-none cursor-pointer rounded-r-full pl-3 pr-4">
+                <ThumbsDownIcon className={cn('size-5', viewerReaction === 'dislike' && "fill-black")} />
                 {dislikes}
             </Button>
         </div>

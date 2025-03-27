@@ -17,7 +17,7 @@ export const VideosSection = () => {
 
     return (
         <Suspense fallback={<VideosSectionSkelton />}>
-            <ErrorBoundary fallback={<p>Error</p>}>
+            <ErrorBoundary fallback={<p>Error happened</p>}>
                 <VideosSectionSuspense />
             </ErrorBoundary>
         </Suspense>
@@ -27,7 +27,7 @@ export const VideosSection = () => {
 
 export const VideosSectionSuspense = () => {
     const [videos, query] = trpc.studio.getMany.useSuspenseInfiniteQuery(
-        { limit: 5 },
+        { limit: 10 },
         { getNextPageParam: (lastPage) => lastPage.nextCursor });
 
     return (
