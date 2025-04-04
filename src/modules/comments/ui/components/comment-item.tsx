@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { trpc } from "@/trpc/client";
 import { cn } from "@/lib/utils";
 interface CommentItemProps {
-    comment: CommentGetManyOutput[number];
+    comment: CommentGetManyOutput['items'][number];
 }
 
 export const CommentItem = ({ comment }: CommentItemProps) => {
@@ -23,7 +23,6 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
     const clerk = useClerk();
     const { userId } = useAuth();
     const utils = trpc.useUtils();
-    console.log('dislike count:', comment.dislikeCount);
 
     const remove = trpc.comments.remove.useMutation({
         onSuccess: () => {
@@ -37,9 +36,32 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
             }
         }
     })
+    const like = trpc.commentReactions.like.useMutation({
+        onSuccess: () => {
+            utils.comments.getMany.invalidate({ videoId: comment.videoId });
+        },
+        onError: (error) => {
+            toast.error("Failed to like comment");
+            if (error?.data?.code === 'UNAUTHORIZED') {
+                clerk.openSignIn();
+            }
+        }
+    });
 
-    console.log(userId);
-    console.log(comment)
+    const dislike = trpc.commentReactions.dislike.useMutation({
+        onSuccess: () => {
+            utils.comments.getMany.invalidate({ videoId: comment.videoId });
+        },
+        onError: (error) => {
+            toast.error("Failed to dislike comment");
+            if (error?.data?.code === 'UNAUTHORIZED') {
+                clerk.openSignIn();
+            }
+        }
+    });
+
+    console.log(comment);
+
 
     return (
         <div className="p-3 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors">
@@ -79,12 +101,13 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                     <div className="flex items-center gap-2 mt-2">
                         <div className="flex items-center gap-1">
                             {/* Like Button */}
+
                             <Button
-                                disabled={false}
+                                disabled={like.isPending}
                                 variant={'ghost'}
                                 size='icon'
                                 className=" cursor-pointer flex items-center gap-1 h-8 px-2"
-                                onClick={() => { }}
+                                onClick={() => like.mutate({ commentId: comment.id })}
                             >
                                 <ThumbsUpIcon className={
                                     cn(comment.viewerReaction === 'like' && 'fill-black',
@@ -97,14 +120,14 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
 
                             {/* Dislike Button */}
                             <Button
-                                disabled={false}
+                                disabled={dislike.isPending}
                                 variant={'ghost'}
                                 size='icon'
                                 className=" cursor-pointer flex items-center gap-1 h-8 px-2"
-                                onClick={() => { }}
+                                onClick={() => dislike.mutate({ commentId: comment.id })}
                             >
                                 <ThumbsDownIcon className={
-                                    cn(comment.viewerReaction === 'dislike' && 'fill-black',
+                                    cn(comment.viewerReaction === "dislike" && 'fill-black',
                                         'h-4 w-4')
                                 } />
                                 <span className="text-xs text-muted-foreground">

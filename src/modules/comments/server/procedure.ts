@@ -97,6 +97,7 @@ export const commentsRouter = createTRPCRouter({
                         eq(commentReactions.type, "dislike"),
                         eq(commentReactions.commentId, comments.id),
                     )),
+                    viewerReaction: viewerReactions.type,
                     totalCount: db.$count(comments, eq(comments.videoId, videoId)),
                 })
                 .from(comments)
