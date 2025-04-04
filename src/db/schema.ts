@@ -38,6 +38,7 @@ export const userRelations = relations(users, ({ many }) => ({
         relationName: "subscription_creator_id_fkey"
     }),
     comments: many(comments),
+    commentReactions: many(commentReactions)
 }))
 
 
@@ -136,7 +137,7 @@ export const videoViews = pgTable("video_views", {
 })])
 
 export const videoViewRelations = relations(videoViews, ({ one }) => ({
-    users: one(users, {
+    user: one(users, {
         fields: [videoViews.userId],
         references: [users.id]
     }),
@@ -166,7 +167,7 @@ export const videoReactions = pgTable("video_reactions", {
 })])
 
 export const videoReactionRelations = relations(videoReactions, ({ one }) => ({
-    users: one(users, {
+    user: one(users, {
         fields: [videoReactions.userId],
         references: [users.id]
     }),
@@ -203,7 +204,9 @@ export const commentRelations = relations(comments, ({ one, many }) => ({
     video: one(videos, {
         fields: [comments.videoId],
         references: [videos.id],
-    })
+    }),
+    reactions: many(commentReactions)
+
 }))
 
 
@@ -224,5 +227,15 @@ export const commentReactions = pgTable("comment_reactions", {
     name: "comment_reactions_pk",
     columns: [t.userId, t.commentId]
 })])
+export const commentReactionRelations = relations(commentReactions, ({ one }) => ({
+    user: one(users, {
+        fields: [commentReactions.userId],
+        references: [users.id]
+    }),
+    comments: one(comments, {
+        fields: [commentReactions.commentId],
+        references: [comments.id]
+    })
+}));
 
 

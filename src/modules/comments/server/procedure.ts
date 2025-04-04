@@ -1,8 +1,8 @@
 import { db } from "@/db";
-import { commentInsertSchema, comments, users } from "@/db/schema";
+import { commentInsertSchema, commentReactions, comments, users } from "@/db/schema";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { z } from 'zod';
-import { desc, eq, getTableColumns } from "drizzle-orm";
+import { desc, eq, getTableColumns, inArray } from "drizzle-orm";
 import { and, lt, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 export const commentsRouter = createTRPCRouter({
@@ -61,14 +61,42 @@ export const commentsRouter = createTRPCRouter({
                 }).nullish(),
                 limit: z.number().min(1).max(100),
             })
-        ).query(async ({ input }) => {
+        ).query(async ({ input, ctx }) => {
 
+            const { clerkUserId } = ctx;
             const { videoId, cursor, limit } = input;
 
+            let userId;
+            const [user] = await db.select().from(users)
+                .where(inArray(users.clerkId, clerkUserId ? [clerkUserId] : []))
+
+            if (user) {
+                userId = user.id;
+            }
+
+            const viewerReactions = db.$with("viewer_reactions").as(
+                db
+                    .select({
+                        commentId: commentReactions.commentId,
+                        type: commentReactions.type,
+                    })
+                    .from(commentReactions)
+                    .where(inArray(commentReactions.userId, userId ? [userId] : []))
+            )
+
             const data = await db
+                .with(viewerReactions)
                 .select({
                     ...getTableColumns(comments),
                     user: users,
+                    likeCount: db.$count(commentReactions, and(
+                        eq(commentReactions.type, "like"),
+                        eq(commentReactions.commentId, comments.id),
+                    )),
+                    dislikeCount: db.$count(commentReactions, and(
+                        eq(commentReactions.type, "dislike"),
+                        eq(commentReactions.commentId, comments.id),
+                    )),
                     totalCount: db.$count(comments, eq(comments.videoId, videoId)),
                 })
                 .from(comments)
@@ -84,6 +112,7 @@ export const commentsRouter = createTRPCRouter({
 
                 ))
                 .innerJoin(users, eq(comments.userId, users.id))
+                .leftJoin(viewerReactions, eq(comments.id, viewerReactions.commentId))
                 .orderBy(desc(comments.updatedAt), desc(comments.id))
                 .limit(limit + 1)
 
