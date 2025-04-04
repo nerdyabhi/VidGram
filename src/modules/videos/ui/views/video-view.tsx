@@ -20,7 +20,7 @@ export const VideoView = ({ videoId }: VideoViewProps) => {
                         <SuggestionsSection />
                     </div>
 
-                    <CommentsSection />
+                    <CommentsSection videoId={videoId} />
                     <div className="hidden lg:block w-full xl:w-[380px] 2xl:w-[460px] shrink-1">
                         <SuggestionsSection />
                     </div>

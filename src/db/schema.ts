@@ -25,17 +25,21 @@ export const categories = pgTable("categories", {
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (t) => [uniqueIndex("name_idx").on(t.name)]);
 
+
+/***USER RELATIONS  *****/
 export const userRelations = relations(users, ({ many }) => ({
     vidoes: many(videos),
     videoViews: many(videoViews),
     videoReactions: many(videoReactions),
-    // subscriptions: many(subscriptions, {
-    //     relationName: "subscription_viewer_id_fkey"
-    // }),
-    // subscribers: many(subscriptions, {
-    //     relationName: "subscription_creator_id_fkey"
-    // })
+    subscriptions: many(subscriptions, {
+        relationName: "subscription_viewer_id_fkey"
+    }),
+    subscribers: many(subscriptions, {
+        relationName: "subscription_creator_id_fkey"
+    }),
+    comments: many(comments),
 }))
+
 
 
 export const subscriptions = pgTable('subscriptions', {
@@ -100,6 +104,7 @@ export const videoUpdateSchema = createUpdateSchema(videos);
 export const videoSelectSchema = createUpdateSchema(videos);
 
 
+/****** VIDEO RELATIONS ***********/
 export const videoRelations = relations(videos, ({ one, many }) => ({
     user: one(users, {
         fields: [videos.userId],
@@ -111,6 +116,7 @@ export const videoRelations = relations(videos, ({ one, many }) => ({
     }),
     views: many(videoViews),
     reactions: many(videoReactions),
+    comments: many(comments),
 }))
 
 export const categoryRelations = relations(users, ({ many }) => ({
@@ -173,5 +179,50 @@ export const videoReactionRelations = relations(videoReactions, ({ one }) => ({
 export const videoReactionSelectSchema = createSelectSchema(videoReactions);
 export const videoReactionInsertSchema = createInsertSchema(videoReactions);
 export const videoReactionUpdateSchema = createUpdateSchema(videoReactions);
+
+
+
+
+/****** COMMENTS **** */
+export const comments = pgTable("comments", {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').references(() => users.id, { onDelete: "cascade" }).notNull(),
+    // Changed foreign key to reference videos.id instead of users.id
+    videoId: uuid('video_id').references(() => videos.id, { onDelete: 'cascade' }).notNull(),
+    value: text('value').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull()
+})
+
+/****** COMMENTS RELATIONS **** */
+export const commentRelations = relations(comments, ({ one, many }) => ({
+    user: one(users, {
+        fields: [comments.userId],
+        references: [users.id],
+    }),
+    video: one(videos, {
+        fields: [comments.videoId],
+        references: [videos.id],
+    })
+}))
+
+
+export const commentSelectionSchema = createSelectSchema(comments);
+export const commentInsertSchema = createInsertSchema(comments);
+export const commentUpdateSchema = createUpdateSchema(comments);
+
+
+/**COMMENT REACTION */
+
+export const commentReactions = pgTable("comment_reactions", {
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    commentId: uuid("comment_id").references(() => comments.id, { onDelete: "cascade" }).notNull(),
+    type: reactionType("type").notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull()
+}, (t) => [primaryKey({
+    name: "comment_reactions_pk",
+    columns: [t.userId, t.commentId]
+})])
 
 
