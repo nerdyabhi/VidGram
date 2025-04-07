@@ -58,10 +58,12 @@ const CommentsSectionSuspense = ({ videoId }: CommentsSectionProps) => {
     }, {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
     })
+    console.log(comments);
+
     return (
         <div className="mt-6">
             <div className="flex flex-col gap-6">
-                <h1>{comments.pages[0].items[0].totalCount} Comments</h1>
+                <h1> {comments?.pages?.[0]?.items?.[0]?.totalCount} Comments</h1>
                 <CommentForm videoId={videoId} />
                 {comments.pages.flatMap((page) => page.items).map(comment => (
                     <CommentItem key={comment.id} comment={comment} />

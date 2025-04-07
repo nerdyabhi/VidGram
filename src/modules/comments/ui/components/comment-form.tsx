@@ -15,10 +15,13 @@ import { z } from "zod";
 
 interface CommentFormProps {
     videoId: string;
+    variant?: "comment" | "reply";
+    parentId?: string;
     onSuccess?: () => void;
+    onCancel?: () => void;
 }
 
-export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
+export const CommentForm = ({ videoId, parentId, onCancel, onSuccess, variant = "comment" }: CommentFormProps) => {
     const utils = trpc.useUtils();
     const clerk = useClerk();
     const { user } = useUser();
@@ -43,13 +46,19 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
         resolver: zodResolver(commentInsertSchema.omit({ userId: true })),
         defaultValues: {
             videoId,
-            value: ""
+            value: "",
+            parentId,
         }
     })
     const handleSubmit = (values: Omit<z.infer<typeof commentInsertSchema>, "userId">) => {
-        create.mutate(values);
+        create.mutate({ ...values, parentId });
+        form.reset();
     };
 
+    const handleCancel = () => {
+        form.reset();
+        onCancel?.();
+    }
     return (
         <FormProvider {...form}>
             <form
@@ -67,7 +76,11 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
                                 <FormControl>
                                     <Textarea
                                         {...field}
-                                        placeholder="Add a comment..."
+                                        placeholder={
+                                            variant === "reply" ?
+                                                "Reply to this Comment"
+                                                : "Add a comment.."
+                                        }
                                         className="resize-none bg-transparent overflow-hidden min-h-0"
                                     />
                                 </FormControl>
@@ -76,13 +89,20 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
                     />
 
                     <div className="justify-end gap-2 mt-2">
+                        {onCancel && (
+                            <Button className="cursor-pointer" variant="ghost" type="button" onClick={() => handleCancel()}>
+                                Cancel
+                            </Button>
+                        )}
                         <Button
                             className={`${create.isPending ? 'cursor-progress' : 'cursor-pointer'}`}
                             type='submit'
                             disabled={create.isPending}
                             size='sm'
                         >
-                            {create.isPending ? 'Commenting...' : 'Comment'}
+                            {variant === "comment"
+                                ? (create.isPending ? 'Commenting...' : 'Comment')
+                                : (create.isPending ? 'Replying...' : 'Reply')}
                         </Button>
                     </div>
                 </div>

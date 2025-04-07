@@ -13,16 +13,25 @@ import { useAuth } from "@clerk/clerk-react";
 import { toast } from "sonner";
 import { trpc } from "@/trpc/client";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { CommentForm } from "./comment-form";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { CommentReplies } from "./comment-replies";
+
 interface CommentItemProps {
     comment: CommentGetManyOutput['items'][number];
+    variant?: "reply" | "comment",
 }
 
-export const CommentItem = ({ comment }: CommentItemProps) => {
+export const CommentItem = ({ comment, variant = 'comment' }: CommentItemProps) => {
 
 
     const clerk = useClerk();
     const { userId } = useAuth();
     const utils = trpc.useUtils();
+
+    const [isReplyOpen, setIsReplyOpen] = useState(false);
+    const [isRepliesOpen, setIsRepliesOpen] = useState(false);
 
     const remove = trpc.comments.remove.useMutation({
         onSuccess: () => {
@@ -135,6 +144,13 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                                 </span>
                             </Button>
                         </div>
+                        {variant === "comment" &&
+                            <Button
+                                onClick={() => { setIsReplyOpen(true) }}
+                                variant='ghost' size='sm'
+                                className='h-8'
+                            > Reply</Button>
+                        }
                     </div>
                 </div>
                 <DropdownMenu>
@@ -145,7 +161,9 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="end" className="w-40">
-                        <DropdownMenuItem className="cursor-pointer font-semibold  " onClick={() => { }}>
+                        <DropdownMenuItem className="cursor-pointer font-semibold  "
+                            onClick={() => { setIsReplyOpen(true) }}
+                        >
                             <MessageSquareIcon size='4' /> Reply
                         </DropdownMenuItem>
 
@@ -158,6 +176,44 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                 </DropdownMenu>
                 {remove.isPending && <h1>Deleting comment...</h1>}
             </div>
+
+            {isReplyOpen && variant === 'comment' && (
+                <div className="mt-4 pl-14">
+                    <CommentForm
+                        variant="reply"
+                        parentId={comment.id}
+                        onCancel={() => setIsReplyOpen(false)}
+                        videoId={comment.videoId}
+                        onSuccess={() => {
+                            setIsReplyOpen(false);
+                            setIsRepliesOpen(true);
+                        }}
+                    />
+                </div>
+            )}
+
+            {comment.replyCount > 0 && variant === "comment" && (
+                <div className="pl-14">
+                    <Button
+                        size='sm'
+                        variant='ghost'
+                        onClick={() => setIsRepliesOpen((current) => !current)}
+                    >
+                        {isRepliesOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                        {comment.replyCount} replies
+                    </Button>
+                </div>
+            )}
+
+
+            {comment.replyCount > 0 && variant === "comment" && isRepliesOpen && (
+                <CommentReplies
+                    parentId={comment.id}
+                    videoId={comment.videoId}
+                />
+            )}
+
+
         </div>
 
     );
