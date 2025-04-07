@@ -161,11 +161,13 @@ export const CommentItem = ({ comment, variant = 'comment' }: CommentItemProps) 
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="end" className="w-40">
-                        <DropdownMenuItem className="cursor-pointer font-semibold  "
-                            onClick={() => { setIsReplyOpen(true) }}
-                        >
-                            <MessageSquareIcon size='4' /> Reply
-                        </DropdownMenuItem>
+                        {variant === "comment" &&
+                            <DropdownMenuItem className="cursor-pointer font-semibold  "
+                                onClick={() => { setIsReplyOpen(true) }}
+                            >
+                                <MessageSquareIcon size='4' /> Reply
+                            </DropdownMenuItem>
+                        }
 
                         {userId === comment.user.clerkId && (
                             <DropdownMenuItem className="cursor-pointer font-semibold text-red-500" onClick={() => { remove.mutate({ id: comment.id }) }}>

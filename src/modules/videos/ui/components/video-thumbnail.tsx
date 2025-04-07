@@ -10,8 +10,7 @@ export const VideoThumbnail = ({ imageUrl, previewUrl, duration }: VideoThumbnai
     console.log(duration);
 
     return (
-        <div className="relative group">
-
+        <div className=" relative group">
             {/* Thumbnail Wrapper */}
             <div className="relative  w-full overflow-hidden rounded-xl aspect-video">
 
