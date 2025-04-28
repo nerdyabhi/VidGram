@@ -1,3 +1,4 @@
+// "use client"
 import { StudioLayout } from "@/modules/studio/ui/layouts/studio-layout";
 import { TRPCProvider } from "@/trpc/client";
 
