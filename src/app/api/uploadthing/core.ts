@@ -2,14 +2,14 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError, UTApi } from "uploadthing/server";
 import { z } from "zod";
 import { auth } from '@clerk/nextjs/server'
-import { clerkClient } from "@clerk/nextjs/server";
+// import { clerkClient } from "@clerk/nextjs/server";
 import { db } from '@/db'
 import { users, videos } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 
 const f = createUploadthing();
 
-const fakeAuth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
+// const fakeAuth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
 
 export const ourFileRouter = {
     thumbnailUploader: f({

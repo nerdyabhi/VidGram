@@ -34,7 +34,7 @@ export const InfiniteScroll = ({
                 <Button className="cursor-pointer" variant={"secondary"} disabled={!hasNextPage || isFetchingNextPage} onClick={() => { fetchNextPage() }}>
                     {isFetchingNextPage ? "Loading..." : "Load More"}
                 </Button>
-            ) : <p> You've Reached end of the list </p>}
+            ) : <p> You&apos;ve Reached end of the list </p>}
         </div>
     )
 }

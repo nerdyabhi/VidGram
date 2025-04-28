@@ -1,6 +1,6 @@
 "use client"
 
-import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
+import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { FlameIcon, HomeIcon, PlaySquareIcon } from "lucide-react"
 import Link from "next/link"
 import { useClerk, useAuth } from "@clerk/nextjs"

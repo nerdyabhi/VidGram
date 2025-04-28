@@ -4,7 +4,6 @@ import { auth } from '@clerk/nextjs/server';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import { cache } from 'react';
-import { Ratelimit } from '@upstash/ratelimit'
 
 import superjson from 'superjson'
 import { ratelimit } from '@/lib/limit';

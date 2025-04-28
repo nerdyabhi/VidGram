@@ -21,7 +21,7 @@ interface CommentFormProps {
     onCancel?: () => void;
 }
 
-export const CommentForm = ({ videoId, parentId, onCancel, onSuccess, variant = "comment" }: CommentFormProps) => {
+export const CommentForm = ({ videoId, parentId, onCancel, variant = "comment" }: CommentFormProps) => {
     const utils = trpc.useUtils();
     const clerk = useClerk();
     const { user } = useUser();

@@ -1,8 +1,8 @@
 import { db } from "@/db";
 import { users, videoReactions, videos, videoViews } from "@/db/schema";
 import { z } from "zod";
-import { DEFAULT_LIMIT } from "@/constants";
-import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
+// import { DEFAULT_LIMIT } from "@/constants";
+import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 import { eq, and, or, lt, desc, getTableColumns } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 

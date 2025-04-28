@@ -26,9 +26,9 @@ export const videoViewsRouter = createTRPCRouter({
                     return existingVideoView;
                 }
 
-                const [createdVideoView] = await db
-                .insert(videoViews)
-                .values({userId , videoId})
-                .returning();
+                // const [createdVideoView] = await db
+                // .insert(videoViews)
+                // .values({userId , videoId})
+                // .returning();
         })
 })

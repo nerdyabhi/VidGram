@@ -16,7 +16,7 @@ interface VideoReactionsProps {
     viewerReaction: VideoGetOneOutput['viewerReaction'];
 }
 
-export const VideoReactions = ({ videoId, likes, dislikes }: VideoReactionsProps) => {
+export const VideoReactions = ({ videoId, likes, dislikes, viewerReaction }: VideoReactionsProps) => {
     const clerk = useClerk();
     const utils = trpc.useUtils();
 
@@ -47,14 +47,12 @@ export const VideoReactions = ({ videoId, likes, dislikes }: VideoReactionsProps
         }
     })
 
-    let viewerReaction: 'like' | 'dislike' = 'like';
     return (
         <div className="flex items-center flex-none">
             <Button
                 disabled={like.isPending || dislike.isPending}
                 onClick={() => {
                     like.mutate({ videoId });
-                    viewerReaction = 'like'
                 }}
                 variant={'secondary'}
                 className="rounded-l-full cursor-pointer rounded-r-none gap-2 pr-4">
@@ -66,7 +64,6 @@ export const VideoReactions = ({ videoId, likes, dislikes }: VideoReactionsProps
             <Button
                 onClick={() => {
                     dislike.mutate({ videoId });
-                    viewerReaction = 'dislike';
                 }}
                 disabled={like.isPending || dislike.isPending}
                 variant={'secondary'} className="rounded-l-none cursor-pointer rounded-r-full pl-3 pr-4">

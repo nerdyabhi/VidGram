@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { commentInsertSchema, commentReactions, comments, users } from "@/db/schema";
+import {  commentReactions, comments, users } from "@/db/schema";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { z } from 'zod';
 import { desc, eq, getTableColumns, inArray, isNull, isNotNull, count } from "drizzle-orm";

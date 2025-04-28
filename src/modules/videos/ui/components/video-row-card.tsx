@@ -1,17 +1,17 @@
 import { cva, type VariantProps } from "class-variance-authority"
-import { useMemo } from "react"
+// import { useMemo } from "react"
 import Link from 'next/link'
 
-import { cn } from "@/lib/utils"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+// import { cn } from "@/lib/utils"
+// import { Skeleton } from "@/components/ui/skeleton"
+// import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
-import { UserInfo } from "@/modules/users/ui/components/user-info"
-import { UserAvatar } from "@/components/user-avatar"
+// import { UserInfo } from "@/modules/users/ui/components/user-info"
+// import { UserAvatar } from "@/components/user-avatar"
 import { VideoMenu } from "./video-menu"
 import { VideoThumbnail } from "./video-thumbnail"
 import { VideoGetManyOutput } from '../../types'
-import Image from "next/image"
+// import Image from "next/image"
 
 
 const videoRowCardVariants = cva("group flex min-w-0", {
@@ -55,7 +55,7 @@ export const VideoRowCardSkeleton = () => {
 export const VideoRowCard = ({ data, size, onRemove }: VideoRowCardProps) => {
     return (
         <div className={videoRowCardVariants({ size }) + ' flex items-center justify-center '}>
-            <div className= {thumbnailVariants({ size })}>
+            <div className={thumbnailVariants({ size })}>
                 <Link href={`/videos/${data.id}`} className="block w-full h-full">
                     <VideoThumbnail
                         imageUrl={data.thumbnailUrl}
@@ -85,7 +85,7 @@ export const VideoRowCard = ({ data, size, onRemove }: VideoRowCardProps) => {
 
             {onRemove && (
                 <div className="ml-auto">
-                    <VideoMenu onRemove={onRemove} />
+                    <VideoMenu onRemove={onRemove} videoId={data.id} />
                 </div>
             )}
         </div>

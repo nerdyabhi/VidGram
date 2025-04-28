@@ -3,7 +3,6 @@ import { integer, pgEnum, primaryKey, timestamp, uniqueIndex, foreignKey } from 
 import { uuid, text, pgTable } from "drizzle-orm/pg-core";
 
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod'
-import { View } from "lucide-react";
 
 export const users = pgTable("users", {
     id: uuid("id").primaryKey().defaultRandom(),

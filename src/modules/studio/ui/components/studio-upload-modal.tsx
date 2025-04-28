@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Loader2Icon, PlusIcon, VideoIcon } from "lucide-react"
+import { Loader2Icon, VideoIcon } from "lucide-react"
 import { trpc } from "@/trpc/client"
 import { toast } from "sonner"
 import { ResponsiveModal } from "@/components/responsive-dialog"

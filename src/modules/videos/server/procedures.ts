@@ -1,13 +1,13 @@
 import { db } from "@/db";
-import { users, videos, videoSelectSchema, videoUpdateSchema, videoViews, videoReactions, subscriptions } from "@/db/schema";
+import { users, videos, videoUpdateSchema, videoViews, videoReactions, subscriptions } from "@/db/schema";
 import { z } from "zod";
-import { DEFAULT_LIMIT } from "@/constants";
+// import { DEFAULT_LIMIT } from "@/constants";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { mux } from "@/lib/mux";
 import { and, eq, getTableColumns, inArray, isNotNull } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { UTApi } from "uploadthing/server";
-import { VideoViews } from "@mux/mux-node/resources/data/video-views.mjs";
+// import { VideoViews } from "@mux/mux-node/resources/data/video-views.mjs";
 
 export const videosRouter = createTRPCRouter({
 
@@ -103,8 +103,8 @@ export const videosRouter = createTRPCRouter({
             }
 
             if (existingVideo.thumbnailKey) {
-                const utapi = UTApi();
-                await utapi.deleteFile(existingVideo.thumbnailKey);
+                const utapi = new UTApi();
+                await utapi.deleteFiles(existingVideo.thumbnailKey);
             }
 
 

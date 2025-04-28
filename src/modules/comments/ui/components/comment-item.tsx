@@ -3,7 +3,7 @@
 import { UserAvatar } from "@/components/user-avatar";
 import { CommentGetManyOutput } from "../../types";
 import Link from "next/link";
-import { eachMonthOfInterval, formatDistanceToNow } from "date-fns";
+import {  formatDistanceToNow } from "date-fns";
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { MessageSquareIcon, MoreVerticalIcon, ThumbsDownIcon, ThumbsUpIcon, Trash2Icon } from "lucide-react";

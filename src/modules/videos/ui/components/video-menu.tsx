@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ListPlusIcon, MoreVertical, MoreVerticalIcon, ShareIcon, Trash2Icon } from "lucide-react";
+import { ListPlusIcon, MoreVerticalIcon, ShareIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 
 interface VideoMenuProps {
@@ -24,7 +24,7 @@ export const VideoMenu = ({ videoId, variant, onRemove }: VideoMenuProps) => {
                 </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" onClick={(e) => onShare()}>
+            <DropdownMenuContent align="end" onClick={() => onShare()}>
                 <DropdownMenuItem>
                     <ShareIcon />
                     Share
