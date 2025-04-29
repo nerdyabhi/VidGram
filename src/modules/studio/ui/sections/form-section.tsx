@@ -113,7 +113,9 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
 
     })
 
-    const fullUrl = `${process.env.VERCEL_URL || "http://localhost:3000"}/videos/${videoId}`
+    const fullUrl = typeof window !== "undefined"
+        ? `${window.location.origin}/videos/${videoId}`
+        : `/videos/${videoId}`;
     const [isCopied, setIsCopied] = useState(false);
     const [thumbnailModalOpen, setThumbnailModalOpen] = useState(false);
 

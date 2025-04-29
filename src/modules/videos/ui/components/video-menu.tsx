@@ -12,7 +12,7 @@ interface VideoMenuProps {
 
 export const VideoMenu = ({ videoId, variant, onRemove }: VideoMenuProps) => {
     const onShare = () => {
-        const fullUrl = `${process.env.VERCEL_URL || "http://localhost:3000"}/videos/${videoId}`
+        const fullUrl = `${window.location.origin}/videos/${videoId}`
         navigator.clipboard.writeText(fullUrl);
         toast.success("Link copied to clipboard");
     }
