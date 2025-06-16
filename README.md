@@ -1,21 +1,8 @@
 # VidGram - Video Sharing Platform
 
-![VidGram Logo](https://via.placeholder.com/200x60?text=VidGram)
-
 ## Overview
 
 **VidGram** is a modern video sharing platform that combines the best features of Instagram and YouTube, allowing users to upload, discover, and engage with short and long-form video content. Built with performance and user experience in mind, VidGram offers a responsive interface that works seamlessly across mobile and desktop devices.
-
-## ✨ Features
-
-- 📱 Responsive design optimized for all devices
-- 🎬 Video uploading and processing
-- 🔍 Category-based content discovery
-- 👤 User profiles and personalized feeds
-- 💬 Interactive comments and engagement
-- 📊 Creator analytics in Studio dashboard
-- 🌙 Dark/Light theme support
-- 🔒 Secure authentication
 
 ## 🛠️ Tech Stack
 
@@ -24,6 +11,7 @@
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: NextAuth.js
 - **File Storage**: UploadThing
+- **Video Transcoding** : MUX
 - **Deployment**: Vercel
 
 ## 📁 Project Structure
@@ -217,63 +205,4 @@ npm run build
 npm run test
 ```
 
-## 📱 Mobile Responsiveness
-
-VidGram is built with a mobile-first approach, ensuring an excellent user experience across all device sizes:
-
-- **Small screens (< 640px)**: Optimized for mobile phones with simplified navigation and full-width content
-- **Medium screens (640px - 1024px)**: Tablet-friendly layouts with adaptive grids
-- **Large screens (> 1024px)**: Enhanced desktop experience with multi-column layouts
-
-## 🔐 Authentication Flow
-
-1. **Registration**: Users can sign up using email/password or OAuth providers
-2. **Login**: Secure authentication with JWT tokens
-3. **Account Recovery**: Password reset functionality
-4. **Session Management**: Automatic token refresh and session persistence
-
-## 🖼️ Content Management
-
-### Video Upload Flow
-
-1. User selects video file(s)
-2. Client-side validation (file size, format)
-3. Chunked upload to UploadThing
-4. Server-side processing (transcoding, thumbnail generation)
-5. Metadata addition (title, description, category)
-6. Publishing to make video available
-
-### Video Discovery
-
-- Home feed with personalized recommendations
-- Category-based browsing
-- Search functionality
-- Trending videos section
-
-## 📊 Studio Features
-
-The Creator Studio provides content creators with tools to:
-
-- Manage uploaded videos
-- Track performance analytics
-- Respond to comments
-- Schedule content
-- Customize channel appearance
-
-## 🌐 Deployment
-
-VidGram is optimized for deployment on Vercel, but can be deployed on any platform that supports Node.js:
-
-1. Connect your Git repository to Vercel
-2. Configure environment variables
-3. Deploy with one click
-
-## 🤝 Contributing
-
-We welcome contributions! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Built with 💖 by [Nerdy Abhi](https://github.com/nerdyabhi)
